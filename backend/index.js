@@ -8,16 +8,18 @@ const mongoose = require("mongoose");
 //Routers Import
 const { CourseRouter} = require("./routes/course");
 const {UserRouter} = require("./routes/user")
+const {adminRouter} = require("./routes/admin");
 
 //Models Import
 const {AdminModel} = require("./db/admin");
 const {CourseModel} = require("./db/course");
 const {PurchaseModel} = require("./db/purchase");
-const {userModel} = require("./db/user");
+const {UserModel} = require("./db/user");
 
 //Routers use
 app.use("/api/v1/user",UserRouter);
 app.use("/api/v1/course", CourseRouter);
+app.use("/api/v1/admin", adminRouter);
 
 const PORT = process.env.PORT || 3000;
 const MONGO_URL = process.env.MONGO_URL;

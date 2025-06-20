@@ -10,6 +10,6 @@ const CourseSchema = new Schema({
     creatorId : ObjectId,
 })
 
-const courseModel = mongoose.model("course",CourseSchema);
+const CourseModel = mongoose.model("course",CourseSchema);
 
-module.exports = {courseModel};
+module.exports = {CourseModel};
