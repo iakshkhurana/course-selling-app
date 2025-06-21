@@ -5,6 +5,7 @@ const {z} = require("zod");
 const UserRouter = Router();
 const {UserModel} = require("../db/user");
 const {JWT_USER_PASSWORD} = require("../config");
+const {userMiddleware} = require("../middlewares/userMiddleware");
 
 const signupSchema = z.object({
     email: z.string().email(),
@@ -60,9 +61,31 @@ UserRouter.post("/signin", async function(req, res) {
     }
 });
 
-// Fetch purchased courses
-UserRouter.get("/purchases", function(req, res) {
-    res.json({message: "Courses Endpoint"});
+// Fetch purchased courses for the logged-in user
+UserRouter.get("/purchases", userMiddleware, async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.userId).populate('purchasedCourses');
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        // Map the populated courses to match the frontend structure
+        const formattedCourses = user.purchasedCourses.map(course => ({
+            id: course._id,
+            name: course.title,
+            description: course.description,
+            img: course.imageUrl,
+            price: course.price,
+            // You can add more fields like purchaseDate if you store them
+        }));
+        
+        res.json(formattedCourses);
+
+    } catch (error) {
+        console.error("Error fetching purchased courses:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 });
 
 module.exports = {UserRouter: UserRouter};

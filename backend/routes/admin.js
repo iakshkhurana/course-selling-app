@@ -2,27 +2,30 @@ const { Router } = require("express");
 const adminRouter = Router();
 const { adminModel, courseModel } = require("../db");
 const { adminMiddleware } = require("../middlewares/admin");
-const { JWT_ADMIN_PASSWORD } = require("../config");
+const { JWT_ADMIN_PASSWORD, ADMIN_SECRET_KEY } = require("../config");
 const jwt = require("jsonwebtoken");
+const { CourseModel } = require("../db/course");
 
-adminRouter.post("/signup", async function (req, res) {
-    const { email, password, firstName, lastName } = req.body;
-    
-    try {
-        await adminModel.create({
-            email,
-            password,
-            firstName,
-            lastName,
-        });
-    } catch (error) {
-        return res.status(400).json({
-            message: "You are already signup!",
+adminRouter.post("/signup", function (req, res) {
+    const { email, password, secretKey } = req.body;
+
+    if (secretKey !== ADMIN_SECRET_KEY) {
+        return res.status(403).json({
+            message: "Invalid secret key. Admin signup forbidden."
         });
     }
 
-    res.status(201).json({
-        message: "Signup successful!",
+    adminModel.create({
+        email: email,
+        password: password
+    }).then(function () {
+        res.status(200).json({
+            message: "Signup successful!",
+        });
+    }).catch(function (error) {
+        return res.status(400).json({
+            message: "You are already signup!",
+        });
     });
 });
 
@@ -131,6 +134,31 @@ adminRouter.get("/course/bulk", adminMiddleware, async function (req, res) {
     res.status(200).json({
         courses: courses,
     });
+});
+
+// Route to create a new course
+adminRouter.post('/courses', adminMiddleware, async (req, res) => {
+    try {
+        const { title, description, price, imageUrl } = req.body;
+
+        if (!title || !description || !price || !imageUrl) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        const newCourse = new CourseModel({
+            title,
+            description,
+            price,
+            imageUrl,
+            creatorId: req.adminId, // From adminMiddleware
+        });
+
+        await newCourse.save();
+        res.status(201).json({ message: 'Course created successfully', courseId: newCourse._id });
+    } catch (error) {
+        console.error("Error creating course:", error);
+        res.status(500).json({ message: 'Server error' });
+    }
 });
 
 module.exports = {

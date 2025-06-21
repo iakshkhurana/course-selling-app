@@ -1,4 +1,13 @@
-function Course({Label}){
+function Course({Label, onBuyNow}){
+    const handleBuyNow = () => {
+        if (onBuyNow) {
+            onBuyNow(Label);
+        } else {
+            // Default behavior - add to cart
+            alert(`${Label.name} added to cart!`);
+        }
+    };
+
     return (
         <div className="w-64 rounded-lg overflow-hidden shadow-lg bg-[rgb(92,114,133)] text-white m-4">
             <img className="w-full" src={Label.img} alt="Course Thumbnail"></img>
@@ -9,7 +18,10 @@ function Course({Label}){
                 <div className="font-light text-blue-200">{Label.description}</div>
             </div>
             <div className="px-6 pt-4 pb-2">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full">
+                <button 
+                    onClick={handleBuyNow}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full"
+                >
                     Buy Now
                 </button>
             </div>
