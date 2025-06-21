@@ -55,7 +55,7 @@ To get a local copy up and running, follow these simple steps.
 
 ### 1. Clone the Repository
 ```sh
-git clone https://github.com/your-username/course-selling-app.git
+git clone https://github.com/iakshkhurana/course-selling-app.git
 cd course-selling-app
 ```
 
