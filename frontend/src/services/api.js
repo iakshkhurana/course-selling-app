@@ -1,4 +1,8 @@
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+// Use a relative path for production and a full URL for development.
+// This allows the Vercel rewrites to work correctly in production.
+const API_BASE_URL = import.meta.env.PROD 
+    ? '/api/v1' 
+    : 'http://localhost:3000/api/v1';
 
 // Helper function for API calls
 const apiCall = async (endpoint, options = {}) => {
