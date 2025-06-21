@@ -5,7 +5,7 @@ const {z} = require("zod");
 const UserRouter = Router();
 const {UserModel} = require("../db/user");
 const {JWT_USER_PASSWORD} = require("../config");
-const {userMiddleware} = require("../middlewares/userMiddleware");
+const {userMiddleware} = require("../middlewares/user");
 
 const signupSchema = z.object({
     email: z.string().email(),
